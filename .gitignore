@@ -1,0 +1,51 @@
+# =============== #
+# 📌 System Files #
+# =============== #
+__pycache__/
+*.pyc
+*.pyo
+*.log
+.DS_Store
+*.swp  # Vim swap files
+
+# ========================= #
+# 📌 Virtual Environment    #
+# ========================= #
+venv/
+.env
+
+# ================================= #
+# 📌 Secret Keys & Config Files     #
+# ================================= #
+.env
+
+# ============================== #
+# 📌 Database & Instance Files   #
+# ============================== #
+instance/
+*.sqlite
+*.db
+*.sqlite3
+db.sqlite
+migrations/
+
+# ========================= #
+# 📌 Dependencies          #
+# ========================= #
+node_modules/
+
+# ========================= #
+# 📌 Flask & Debugging     #
+# ========================= #
+*.pid
+*.seed
+*.dump
+error.log
+
+# ========================= #
+# 📌 IDE & Editor Files    #
+# ========================= #
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
