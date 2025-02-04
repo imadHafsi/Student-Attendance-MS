@@ -2,8 +2,9 @@
 import os
 from flask import Flask
 from flask_login import LoginManager
-from .config import DevelopmentConfig, ProductionConfig, TestingConfig
+from flask_talisman import Talisman
 
+from .config import DevelopmentConfig, ProductionConfig, TestingConfig
 from .database import db, init_db, create_database
 
 
@@ -30,12 +31,35 @@ def create_app():
     login_manager = LoginManager(app)
     login_manager.login_view = 'auth.login'
 
+        # Define your CSP
+    csp = {
+    'default-src': ['\'self\'','https://cdn.lordicon.com',
+                    'https://cdn.datatables.net',
+                    'https://cdnjs.cloudflare.com'
+                    ],
+    'script-src': [
+                    '\'self\'',
+                     '\'unsafe-eval\'',
+                    'https://cdn.jsdelivr.net',
+                    'https://cdn.lordicon.com',
+                    'https://cdn.datatables.net',
+                    'https://cdnjs.cloudflare.com',
+                    'https://code.jquery.com'  # Add jQuery CDN
+                ],
+    'style-src': ['\'self\' \'unsafe-inline\'','https://cdn.lordicon.com','https://fonts.googleapis.com','https://cdn.datatables.net'],
+    'img-src': ['\'self\' data:','https://cdn.lordicon.com'],
+    'font-src': ['\'self\' data:','https://fonts.gstatic.com','https://cdn.lordicon.com']
+    }
+
+    # Enable Flask-Talisman with the CSP
+    Talisman(app, content_security_policy=csp,strict_transport_security=True, strict_transport_security_max_age=31536000,content_security_policy_nonce_in=['script-src'])
     
     from .models import User
 
     @login_manager.user_loader
     def load_user(user_id):
         return User.query.get(int(user_id)) 
+    
 
     from .blueprints.admin import admin
     from .blueprints.auth import auth

@@ -1,0 +1,44 @@
+{% extends "account/base_account.html" %}
+
+{% block title %}Reset Password{% endblock title %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6 col-xl-5">
+        <div class="card mt-4">
+            <div class="card-body p-4 text-center">
+                <div class="avatar-lg mx-auto mt-2">
+                    <div class="avatar-title bg-light text-success display-3 rounded-circle">
+                        <i class="ri-checkbox-circle-fill"></i>
+                    </div>
+                </div>
+                <div class="mt-4 pt-2">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %} 
+                        {% for category,message in messages %}
+                    <h4>{{message.title}}</h4>
+                    <p class="text-muted mx-4">{{message.message}}</p>
+                    <div class="mt-4">
+                        <a href="{{ url_for('auth.index')}}" class="btn btn-success w-100">Back to Dashboard</a>
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                    {% endwith %}
+                </div>
+            </div>
+            <!-- end card body -->
+        </div>
+        <!-- end card -->
+
+    </div>
+</div>
+   
+{% endblock %}
+
+{% block extra_js %}
+
+<!-- password-addon init -->
+<script src="{{url_for('static',filename='js/pages/passowrd-create.init.js')}}"></script>
+
+{% endblock extra_js %}

@@ -1,0 +1,129 @@
+{% extends "account/base_account.html" %}
+
+{% block title %}Sign Up{% endblock title %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6 col-xl-5">
+        <div class="card mt-4">
+
+            <div class="card-body p-4">
+                <div class="text-center mt-2">
+                    <h5 class="text-primary">Create New Account</h5>
+                    <p class="text-muted">Get your free account now</p>
+                </div>
+                <div class="p-2 mt-4">
+                                       
+                    <form method="POST" class="needs-validation"  action="{{ url_for('auth.signup') }}">
+                        {{ form.hidden_tag() }}
+                        {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                        {% for message in messages %}
+                         <div class="alert alert-danger flashes mb-4 text-center" role="alert">
+                            <strong>{{ message }}</strong>
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                        {% endwith %}
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username <span class="text-danger">*</span></label>
+                            {{ form.username(class="form-control") }}
+                            {% if form.username.errors%}   
+                                {% for message in form.username.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{message}}
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                            {{ form.email(class="form-control") }}
+                            {% if form.email.errors%}
+                                {% for message in form.email.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{message}}
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class="mb-3">
+                            <label for="role" class="form-label">Role <span class="text-danger">*</span></label>
+                            {{ form.role(class="form-select") }}
+                            {% if form.role.errors %}   
+                                {% for message in form.role.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="password-input">Password <span class="text-danger">*</span></label>
+                            <div class="position-relative auth-pass-inputgroup">
+                                {{ form.password(class="form-control password-input pe-5") }}
+                                {% if form.password.errors%}   
+                                {% for message in form.password.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{message}}
+                                    </div>
+                                {% endfor %}
+                                {% endif %}                                                  
+                                <button class="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted password-addon" type="button" id="password-addon"><i class="ri-eye-fill align-middle"></i></button>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="password-input">Confirm Password <span class="text-danger">*</span></label>
+                            <div class="position-relative auth-pass-inputgroup">
+                                {{ form.confirm(class="form-control password-input pe-5") }}     
+                                {% if form.confirm.errors%}   
+                                {% for message in form.confirm.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{message}}
+                                    </div>
+                                {% endfor %}
+                                {% endif %}                                                  
+                                <button class="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted password-addon" type="button" id="password-addon"><i class="ri-eye-fill align-middle"></i></button>
+                            </div>
+                        </div>
+
+                        <div id="password-contain" class="p-3 bg-light mb-2 rounded">
+                            <h5 class="fs-13">Password must contain:</h5>
+                            <p id="pass-length" class="invalid fs-12 mb-2">Minimum <b>8 characters</b></p>
+                            <p id="pass-lower" class="invalid fs-12 mb-2">At <b>lowercase</b> letter (a-z)</p>
+                            <p id="pass-upper" class="invalid fs-12 mb-2">At least <b>uppercase</b> letter (A-Z)</p>
+                            <p id="pass-number" class="invalid fs-12 mb-0">A least <b>number</b> (0-9)</p>
+                        </div>
+
+                        <div class="mb-4">
+                            <p class="mb-0 fs-12 text-muted fst-italic">By registering you agree to the ImadCodes <a href="#" class="text-primary text-decoration-underline fst-normal fw-medium">Terms of Use</a></p>
+                        </div>
+                        <div class="mt-4">
+                            <button class="btn btn-success w-100" type="submit">{{ form.submit.label.text }}</button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+            <!-- end card body -->
+        </div>
+        <!-- end card -->
+
+        <div class="mt-4 text-center">
+            <p class="mb-0">Already have an account ? <a href="/login" class="fw-semibold text-primary text-decoration-underline"> Signin </a> </p>
+        </div>
+
+    </div>
+</div>
+<!-- end row -->
+
+{% endblock %}
+
+{% block extra_js %}
+
+<!-- password-addon init -->
+<script src="{{url_for('static',filename='js/pages/passowrd-create.init.js')}}"></script>
+
+{% endblock extra_js %}

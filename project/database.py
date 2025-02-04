@@ -1,6 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from werkzeug.security import generate_password_hash
 
 db = SQLAlchemy()
 migrate = Migrate()  # Define Migrate globally
@@ -12,11 +11,10 @@ def init_db(app):
 
 def create_database():
     """Create database tables if they do not exist."""
-    from .models import User
+    from .models import User,Role,Class
+    db.drop_all()
     db.create_all()
-    # Create users if they don't exist
-    admin_user = User.query.filter_by(username='admin').first()
-    if admin_user is None:
-        admin_user = User(username='admin', password=generate_password_hash("admin"))
-        db.session.add(admin_user)
-        db.session.commit()
+
+    from .data import data
+    data(db)
+    
