@@ -6,9 +6,22 @@ from werkzeug.security import generate_password_hash,check_password_hash
 from ..database import db
 from ..models import User,Role
 from ..forms import LoginForm , SignupForm
-
+from ..utils import redirect_based_on_role
 
 auth  = Blueprint('auth',__name__,template_folder='templates',static_folder='static',)
+
+@auth.route('/')
+def index():
+    """Redirect based on role """
+    #return redirect_based_on_role()
+    return render_template('user-base.html')
+
+
+@auth.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('auth.login'))
 
 
 @auth.route('/login', methods=['POST', 'GET'])
@@ -17,7 +30,7 @@ def login():
     """
     
     if current_user.is_authenticated:
-        return 'redirect_based_on_role()'
+        return redirect_based_on_role()
 
     form = LoginForm()
     
@@ -64,7 +77,7 @@ def login():
         login_user(user, remember=remember)
 
         if current_user.is_authenticated:
-            return 'redirect_based_on_role()'
+            return redirect_based_on_role()
         
     return render_template('account/login.html', form=form)
 
@@ -73,7 +86,7 @@ def login():
 def signup():
     
     if current_user.is_authenticated:
-        return 'redirect_based_on_role()'
+        return redirect_based_on_role()
     
     form = SignupForm()
 
@@ -96,19 +109,16 @@ def signup():
             return redirect(url_for('auth.signup'))
         if user_username:    
             flash("Username already Exists",'danger')
-            return redirect(url_for('auth.signup'))
+            return redirect(url_for('auth.signup')) 
         if not role:    
             flash('Invalid role selected', 'danger')
             return redirect(url_for('auth.signup'))
         
 
         new_user = User(email=email,username=username,password=generate_password_hash(password), role=role )
-        #user_info = UserInfo()
-        #new_user.user_info = user_info
 
 
         db.session.add(new_user)
-        #db.session.add(user_info)
         db.session.commit()
 
         flash('Your account is created successfully', 'success')
@@ -135,3 +145,9 @@ def forgot_password():
     #         return redirect(url_for('auth.forgot_password'))
     
     # return render_template('account/forgot_password.html',form=forgotPassform)
+
+
+@auth.route('/profile/delete-account',methods=['POST'])
+@login_required
+def delete_account():
+    pass

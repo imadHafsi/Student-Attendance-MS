@@ -1,0 +1,82 @@
+
+<!DOCTYPE html>
+<html lang="en" lang="en" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg" data-sidebar-image="none" data-preloader="disable">
+<head>
+    <meta charset="utf-8" />
+    <title>{% block title %}{% endblock title %} | ImadCodes - Student Attendance MS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="Imad Hafsi Website" name="description" />
+    <meta content="ImadCodes" name="author" />
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="{{url_for('static' ,filename='images/favicon.ico')}}" />
+
+    {% block css %}
+    {% block extra_css %}
+    {% endblock extra_css %}
+
+    {% if session.get('rtl') %}
+        <link href="{{ url_for('static', filename='css/bootstrap-rtl.min.css') }}" id="bootstrap-style" rel="stylesheet" type="text/css" />
+        <link href="{{ url_for('static', filename='css/app-rtl.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
+    {% else %}
+        <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" id="bootstrap-style" rel="stylesheet" type="text/css" />
+        <link href="{{ url_for('static', filename='css/app.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
+    {% endif %}
+
+    <!-- Layout config Js -->
+    <script src="{{url_for('static' ,filename='js/layout.js')}}"></script>
+    <!-- Icons Css -->
+    <link href="{{url_for('static' ,filename='css/icons.min.css')}}" rel="stylesheet" type="text/css" />
+    <!-- custom Css-->
+    <link href="{{url_for('static' ,filename='css/custom.min.css')}}" id="app-style" rel="stylesheet" type="text/css" />
+    {% endblock css %}
+
+ 
+</head>
+<body dir="{{ 'rtl' if session.get('rtl') else 'ltr' }}">
+    <!-- Begin page -->
+    <div id="layout-wrapper">
+        {% block header %}
+        {% endblock header %}
+        {% block sidebar %}
+        {% endblock sidebar %}
+        
+        {% block content %}
+
+        {% block footer %}
+        {% endblock footer %}
+        {% endblock content %}
+    </div>
+    
+    {% block extra_content %}        
+    {% endblock extra_content %}
+        
+    <!-- END layout-wrapper -->
+    {% block right_sidebar %}
+    {% include "customizer.html" %}
+    {% endblock right_sidebar %}
+
+    {% block javascript %}
+    <!-- JAVASCRIPT -->
+    <script src="{{url_for('static' ,filename='libs/bootstrap/dist/js/bootstrap.bundle.min.js')}}"></script>
+    <script src="{{url_for('static' ,filename='libs/simplebar/dist/simplebar.min.js')}}"></script>
+    <script src="{{url_for('static' ,filename='libs/node-waves/dist/waves.min.js')}}"></script>
+    <script src="{{url_for('static' ,filename='libs/feather-icons/dist/feather.min.js')}}"></script>
+    <script src="{{url_for('static' ,filename='js/pages/plugins/lord-icon-2.1.0.js')}}"></script>
+    <script src="{{url_for('static' ,filename='js/plugins.js')}}"></script>
+
+    <!-- Sweet Alerts js -->
+    <script src="{{url_for('static' ,filename='libs/sweetalert2/dist/sweetalert2.min.js')}}"></script>
+
+    <!-- Sweet alert init js-->
+    <script src="{{url_for('static' ,filename='js/pages/sweetalerts.init.js')}}"></script>
+
+    {% block extra_js %}
+    {% endblock extra_js %}
+    <!-- App js -->
+    <script src="{{url_for('static' ,filename='js/app.js')}}"></script>
+
+    {% endblock javascript %}
+
+</body>
+
+</html>

@@ -1,11 +1,13 @@
 
 import os
-from flask import Flask
+from flask import Flask ,  url_for , request , session , redirect
 from flask_login import LoginManager
 from flask_talisman import Talisman
 
 from .config import DevelopmentConfig, ProductionConfig, TestingConfig
 from .database import db, init_db, create_database
+from .blueprints import blueprints
+
 
 
 def create_app():
@@ -24,6 +26,7 @@ def create_app():
     
     # Initialize database
     init_db(app)
+
 
     with app.app_context():
         create_database()  # Create tables inside application context
@@ -61,11 +64,20 @@ def create_app():
         return User.query.get(int(user_id)) 
     
 
-    from .blueprints.admin import admin
-    from .blueprints.auth import auth
 
-    app.register_blueprint(admin , url_prefix='/admin')
-    app.register_blueprint(auth , url_prefix='/')
+    for url_prefix, blueprint in blueprints:
+        app.register_blueprint(blueprint, url_prefix=url_prefix)
 
+
+    @app.route('/toggle-direction')
+    def toggle_direction():
+        # Toggle the 'rtl' session variable
+        if session.get('rtl'):
+            session['rtl'] = False
+        else:
+            session['rtl'] = True
+
+        # Redirect back to the referring page or to a fallback page if no referrer is available
+        return redirect(request.referrer or url_for('index'))
 
     return app

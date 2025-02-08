@@ -14,6 +14,16 @@ class StatusEnum(enum.Enum):
     Active = "Active"
     Inactive = "Inactive"
 
+class AttendanceStatus(enum.Enum):
+    Present = "Present"
+    Absent = "Absent"
+    Late = "Late"  # Arrived after class started
+    Excused = "Excused"  # Absent but has a valid excuse
+    Unexcused = "Unexcused"  # Absent without a valid reason
+    LeftEarly = "Left Early"  # Attended but left before the session ended
+    Sick = "Sick"  # Absent due to illness
+    Remote = "Remote"  # Attended remotely (online)
+
 
 # Association table between roles and permissions
 roles_permissions = db.Table('roles_permissions',
@@ -60,28 +70,32 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(100), unique=True)
     password = db.Column(db.String(100))
     username = db.Column(db.String(100), unique=True)
-    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     status = db.Column(db.Enum(StatusEnum), default=StatusEnum.Inactive, nullable=False)
+
+    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     role = db.relationship('Role', backref='users')
     
+    profile = db.relationship('Profile', uselist=False, backref='user', lazy='joined')
+
+
     individual_permissions = db.relationship('Permission', secondary=users_permissions, backref=db.backref('individual_users', lazy='dynamic'))
     denied_permissions = db.relationship('Permission', secondary=users_denied_permissions, backref=db.backref('denied_users', lazy='dynamic'))
     
-    # One-to-One relationship with UserInfo
-    user_info = db.relationship('UserInfo', backref='users', uselist=False)
     
-    #teacher_classes = db.relationship('TeacherClass', backref='teacher', lazy=True)
-    #supervised_classes = db.relationship('SupervisorClass', backref='supervisor', lazy=True)
-
-    def __init__(self, email, username, password , role , status=StatusEnum.Inactive):
+    def __init__(self, email, username, password , role , status=StatusEnum.Active):
         self.email = email
         self.username = username
         self.password = password
         self.status = status
         self.role = role
+        self.profile = Profile()
 
-        # Automatically create a default UserInfo instance
-        self.user_info = UserInfo()
+            # Automatically create a Student entry if the role is Student
+        if role.name.lower() == "student":
+            new_student = Student(user=self)
+            db.session.add(new_student)
+
+
 
     def has_permission(self, permission_name):
         """Check if user has a specific permission, either through their role or individually."""
@@ -100,10 +114,11 @@ class User(db.Model, UserMixin):
     def __repr__(self):
         return f'<User {self.username}>'
     
-class UserInfo(db.Model):
+class Profile(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(100), nullable=True, default='')
     last_name = db.Column(db.String(100), nullable=True, default='')
+    sex = db.Column(db.String(100), nullable=True, default='')
     avatar = db.Column(db.String(200), nullable=True, default='default.jpg')
     date_of_birth = db.Column(db.Date, nullable=True)
     address = db.Column(db.String(200), nullable=True, default='')
@@ -113,42 +128,71 @@ class UserInfo(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
 
+# Association Table for Many-to-Many Relationship
+teacher_class = db.Table(
+    'teacher_class',
+    db.Column('teacher_id', db.Integer, db.ForeignKey('teachers.id'), primary_key=True),
+    db.Column('class_id', db.Integer, db.ForeignKey('classes.id'), primary_key=True)
+)
+
 
 # Class table
 class Class(db.Model):
+    __tablename__ = 'classes'
     id = db.Column(db.Integer, primary_key=True)
     level = db.Column(db.Integer,nullable=False)
     section = db.Column(db.String(100), nullable=False)
     group = db.Column(db.Integer,nullable=False)
-    students = db.relationship('Student', backref='class_info', lazy=True)
-    teacher_classes = db.relationship('TeacherClass', backref='class_info', lazy=True)
-    supervisor_classes = db.relationship('SupervisorClass', backref='class_info', lazy=True)
 
-# Association table for Teacher-Class (Many-to-Many relationship)
-class TeacherClass(db.Model):
-    __tablename__ = 'teacherclass'
-    id = db.Column(db.Integer, primary_key=True)
-    teacher_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    class_id = db.Column(db.Integer, db.ForeignKey('class.id'), nullable=False)
+    supervisor_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    supervisor = db.relationship('User', backref='classes')
 
-# Association table for Supervisor-Class (Many-to-Many relationship)
-class SupervisorClass(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    supervisor_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    class_id = db.Column(db.Integer, db.ForeignKey('class.id'), nullable=False)
+    teachers = db.relationship('Teacher', secondary=teacher_class, back_populates='classes')
 
-# Student table
-class Student(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    
+
+
+class Subject(db.Model):
+    __tablename__ = 'subjects'
+    id = db.Column(db.Integer , primary_key=True)
+    name = db.Column(db.String(100), unique=True)
+
+
+class Teacher(db.Model):
+    __tablename__ = 'teachers'
+    id = db.Column(db.Integer , primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), unique=True, nullable=False)
-    class_id = db.Column(db.Integer, db.ForeignKey('class.id'), nullable=False)
-    attendance = db.relationship('Attendance', backref='student_info', lazy=True)
+    subject_id = db.Column(db.Integer, db.ForeignKey('subjects.id'), nullable=False)
+    user = db.relationship('User', backref=db.backref('teacher', uselist=False))
+    subject = db.relationship('Subject', backref='teachers')
 
-# Attendance table
+    classes = db.relationship('Class', secondary=teacher_class, back_populates='teachers')
+
+
+class Student(db.Model):
+    __tablename__ = 'students'
+    id = db.Column(db.Integer , primary_key=True)
+    student_id = db.Column(db.String(20) , unique = True)
+
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), unique=True, nullable=False)
+    user = db.relationship('User', backref=db.backref('student', uselist=False))
+
+    class_id = db.Column(db.Integer, db.ForeignKey('classes.id'), nullable=True)
+    class_ = db.relationship('Class', backref='students')
+
+
 class Attendance(db.Model):
+    __tablename__ = 'attendances'
+    
     id = db.Column(db.Integer, primary_key=True)
-    student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)
-    date = db.Column(db.Date, default=datetime.utcnow, nullable=False)
-    teacher_class_id = db.Column(db.Integer, db.ForeignKey('teacherclass.id'), nullable=False)
-    status = db.Column(db.String(10), nullable=False)  # Present, Absent, Late, Excused
-    recorded_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    student_id = db.Column(db.Integer, db.ForeignKey('students.id'), nullable=False)  # Student's attendance
+    subject_id = db.Column(db.Integer, db.ForeignKey('subjects.id'), nullable=False)  # Subject of attendance
+    recordedby_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)  # Who recorded attendance
+    date = db.Column(db.Date, nullable=False)
+    status = db.Column(db.Enum(AttendanceStatus), nullable=False)
+
+    # Relationships
+    student = db.relationship('Student', backref='attendances')  # The student
+    subject = db.relationship('Subject', backref='attendances')  # Subject attended
+    recorded_by = db.relationship('User', foreign_keys=[recordedby_id], backref='recorded_attendances')  # Who recorded
+

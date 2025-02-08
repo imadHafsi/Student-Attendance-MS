@@ -14,18 +14,14 @@ document.querySelectorAll('.edit-item-btn').forEach(function(button) {
         var id = this.getAttribute('data-id');
         var username = this.getAttribute('data-username');
         var email = this.getAttribute('data-email');
-        var dob = this.getAttribute('data-dob');
         var role = this.getAttribute('data-role');
-        var phone = this.getAttribute('data-phone');
         var status = this.getAttribute('data-status');
 
         // Populate the modal fields with data
         document.getElementById('id-field').value = id;
         document.getElementById('username-field').value = username;
         document.getElementById('email-field').value = email;
-        document.getElementById('dob-field').value = dob;
         document.getElementById('role-field').value = role;
-        document.getElementById('phone-field').value = phone;
         document.getElementById('status-field').value = status;
     });
 });
@@ -34,9 +30,7 @@ document.getElementById("showModal").addEventListener("hidden.bs.modal", functio
     document.getElementById('id-field').value = "";
     document.getElementById('username-field').value = "";
     document.getElementById('email-field').value = "";
-    document.getElementById('dob-field').value = "";
     document.getElementById('role-field').value = "";
-    document.getElementById('phone-field').value = "";
     document.getElementById('status-field').value = "";
 });
 
@@ -54,9 +48,7 @@ if (e.relatedTarget.classList.contains("edit-item-btn")) {
     document.querySelector("input[name='id']").value = e.relatedTarget.getAttribute("data-id");
     form.username.value = e.relatedTarget.getAttribute("data-username");
     form.email.value = e.relatedTarget.getAttribute("data-email");
-    form.date_of_birth.value = e.relatedTarget.getAttribute("data-dob");
     form.role.value = e.relatedTarget.getAttribute("data-role");
-    form.phone_number.value = e.relatedTarget.getAttribute("data-phone");
     form.status.value = e.relatedTarget.getAttribute("data-status");
 
 } else if (e.relatedTarget.classList.contains("add-btn")) {
@@ -68,9 +60,7 @@ if (e.relatedTarget.classList.contains("edit-item-btn")) {
     form.id.value = "";
     form.username.value = "";
     form.email.value = "";
-    form.date_of_birth.value = "";
     form.role.value = "";
-    form.phone_number.value = "";
     form.status.value = "";
 
 }
@@ -95,7 +85,7 @@ document.querySelectorAll('.view-user-details').forEach(button => {
             .then(response => response.json())
             .then(data => {
                 // Populate the detail view with the user data
-                console.log(data.first_name+" "+data.last_name);
+                console.log(data.first_name+" "+data.last_name+" "+data.email);
                 document.getElementById('user-view-detail-avatar').src = data.avatar;
                 document.getElementById('user-view-detail-fullname').textContent = data.first_name || "N/A" +" "+data.last_name || "N/A";
                 document.getElementById('user-view-detail-email').textContent = data.email;

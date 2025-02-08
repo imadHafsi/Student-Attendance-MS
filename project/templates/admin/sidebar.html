@@ -1,0 +1,144 @@
+{% block sidebar %}
+        <!-- ========== App Menu ========== -->
+        <div class="app-menu navbar-menu">
+            <!-- LOGO -->
+            <div class="navbar-brand-box">
+                <!-- Dark Logo-->
+                <a href="/" class="logo logo-dark">
+                    <span class="logo-sm">
+                        <img src="{{url_for('static' ,filename='images/logo-sm.png')}}" alt="" height="22">
+                    </span>
+                    <span class="logo-lg">
+                        <img src="{{url_for('static' ,filename='images/logo-dark.png')}}" alt="" height="17">
+                    </span>
+                </a>
+                <!-- Light Logo-->
+                <a href="/" class="logo logo-light">
+                    <span class="logo-sm">
+                        <img src="{{url_for('static' ,filename='images/logo-sm.png')}}" alt="" height="22">
+                    </span>
+                    <span class="logo-lg">
+                        <img src="{{url_for('static' ,filename='images/logo-light.png')}}" alt="" height="30">
+                    </span>
+                </a>
+                <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover" id="vertical-hover">
+                    <i class="ri-record-circle-line"></i>
+                </button>
+            </div>
+
+            <div id="scrollbar">
+                <div class="container-fluid">
+                    
+                    <div id="two-column-menu">
+                    </div>
+                    <ul class="navbar-nav" id="navbar-nav">
+                        <li class="menu-title"><span data-key="t-menu">Menu</span></li>
+                        
+                        <!-- Dashboard -->
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="{{ url_for('admin.dashboard') }}">
+                                <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboard">Dashboard</span>
+                            </a>
+                        </li>
+
+                        <!-- User Management -->
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="#sidebarDashboards" data-bs-toggle="collapse" role="button"
+                                aria-expanded="false" aria-controls="sidebarDashboards">
+                                <i class="ri-user-line"></i> <span data-key="t-users">Users</span>
+                            </a>
+                            <div class="collapse menu-dropdown" id="sidebarDashboards">
+                                <ul class="nav nav-sm flex-column">
+                                    
+                                    <li class="nav-item">
+                                        <a href="{{ url_for('admin.view_users') }}" class="nav-link" data-key="t-Accounts"> Accounts </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{{ url_for('admin.view_teachers') }}" class="nav-link" data-key="t-Teachers"> Teachers </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{{ url_for('admin.view_supervisors') }}" class="nav-link" data-key="t-Supervisors"> Supervisors </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{{ url_for('admin.view_students') }}" class="nav-link" data-key="t-Students"> Students </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="/roles-permissions">
+                                <i class="ri-shield-user-line"></i> <span data-key="t-roles">Roles & Permissions</span>
+                            </a>
+                        </li>
+
+                        <!-- Attendance Management -->
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="/mark-attendance">
+                                <i class="ri-check-double-line"></i> <span data-key="t-attendance">Mark Attendance</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="/attendance-reports">
+                                <i class="ri-file-list-line"></i> <span data-key="t-attendance-reports">Attendance Reports</span>
+                            </a>
+                        </li>
+
+                        <!-- Class Management -->
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="{{ url_for('admin.view_classes') }}">
+                                <i class="ri-school-line"></i> <span data-key="t-classes">Classes</span>
+                            </a>
+                        </li>
+
+                        <!-- Reports & Analytics -->
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="/analytics">
+                                <i class="ri-bar-chart-box-line"></i> <span data-key="t-analytics">Analytics</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="/reports">
+                                <i class="ri-file-chart-line"></i> <span data-key="t-reports">Reports</span>
+                            </a>
+                        </li>
+
+                        <!-- System Settings -->
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="/settings">
+                                <i class="ri-settings-3-line"></i> <span data-key="t-settings">Settings</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="/notifications">
+                                <i class="ri-notification-3-line"></i> <span data-key="t-notifications">Notifications</span>
+                            </a>
+                        </li>
+
+                        <!-- Logs & Security -->
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="/activity-logs">
+                                <i class="ri-history-line"></i> <span data-key="t-activity-logs">Activity Logs</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="/security-logs">
+                                <i class="ri-lock-password-line"></i> <span data-key="t-security-logs">Security Logs</span>
+                            </a>
+                        </li>
+
+                        <!-- Logout -->
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="/logout">
+                                <i class="ri-logout-box-line"></i> <span data-key="t-logout">Logout</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <!-- Sidebar -->
+            </div>
+            <div class="sidebar-background"></div>
+        </div>
+        <!-- Left Sidebar End -->
+        <!-- Vertical Overlay-->
+        <div class="vertical-overlay"></div>
+{% endblock sidebar %}

@@ -1,4 +1,4 @@
-from .models import Role,User,Class
+from .models import Role,User,Class,Profile
 from werkzeug.security import generate_password_hash
 
 def data(db):
@@ -17,6 +17,11 @@ def data(db):
     if supervisor_role is None:
         supervisor_role = Role(name='Supervisor')
         db.session.add(supervisor_role)
+    
+    student_role = Role.query.filter_by(name='Student').first()
+    if student_role is None:
+        student_role = Role(name='Student')
+        db.session.add(student_role)
 
 
     admin_user = User.query.filter_by(username='admin').first()
@@ -38,70 +43,50 @@ def data(db):
     if Supervisor_user3 is None:
         Supervisor_user3 = User(username='supervisor3', email='supervisor3@example.com', password=generate_password_hash("supervisor3") , role=supervisor_role )
         db.session.add(Supervisor_user3)
+
+    student1 = User.query.filter_by(username='student1').first()
+    if student1 is None:
+        student1 = User(username='student1', email='student1@example.com', password=generate_password_hash("student1") , role=student_role )
+        student1.profile.first_name = "Imad"
+        student1.profile.last_name = "Hafsi"
+        student1.profile.sex = "Male"
+        db.session.add(student1)
     
+    student2 = User.query.filter_by(username='student2').first()
+    if student2 is None:
+        student2 = User(username='student2', email='student2@example.com', password=generate_password_hash("student2") , role=student_role )
+        student2.profile.first_name = "Sana"
+        student2.profile.last_name = "Hafsi"
+        student2.profile.sex = "Female"
+        db.session.add(student2)
 
 
-    class111 = Class(level=1,section="Common trunk literature",group=1)
-    class112 = Class(level=1,section="Common trunk literature",group=2)
+    classes = [
+        Class(level=1, section="Common trunk literature", group=1),
+        Class(level=1, section="Common trunk literature", group=2),
+        Class(level=1, section="Common trunk literature", group=3),
+        Class(level=1, section="Common trunk science and technology", group=1),
+        Class(level=1, section="Common trunk science and technology", group=2),
+        Class(level=1, section="Common trunk science and technology", group=3),
+        Class(level=2, section="Experimental sciences", group=1),
+        Class(level=2, section="Experimental sciences", group=2),
+        Class(level=2, section="Experimental sciences", group=3),
+        Class(level=3, section="Experimental sciences", group=1),
+        Class(level=3, section="Experimental sciences", group=2),
+        Class(level=3, section="Experimental sciences", group=3),
+        Class(level=2, section="Literature and philosophy", group=1),
+        Class(level=2, section="Literature and philosophy", group=2),
+        Class(level=3, section="Literature and philosophy", group=1),
+        Class(level=3, section="Literature and philosophy", group=2),
+        Class(level=2, section="Management and economy", group=1),
+        Class(level=3, section="Management and economy", group=1),
+        Class(level=2, section="Foreign languages", group=1),
+        Class(level=3, section="Foreign languages", group=1),
+        Class(level=2, section="Mathematics", group=1),
+        Class(level=3, section="Mathematics", group=1),
+        Class(level=2, section="Science Technology", group=1),
+        Class(level=3, section="Science Technology", group=1),
+    ]
 
-    class121 = Class(level=1,section="Common trunk science and technology",group=1)
-    class122 = Class(level=1,section="Common trunk science and technology",group=2)
-    class123 = Class(level=1,section="Common trunk science and technology",group=3)
-
-    class211 = Class(level=2,section="Experimental sciences",group=1)
-    class212 = Class(level=2,section="Experimental sciences",group=2)
-    class213 = Class(level=2,section="Experimental sciences",group=3)
-
-    class311 = Class(level=3,section="Experimental sciences",group=1)
-    class312 = Class(level=3,section="Experimental sciences",group=2)
-    class313 = Class(level=3,section="Experimental sciences",group=3)
-
-    class221 = Class(level=2,section="Literature and philosophy",group=1)
-    class222 = Class(level=2,section="Literature and philosophy",group=2)
-
-    class321 = Class(level=3,section="Literature and philosophy",group=1)
-    class322 = Class(level=3,section="Literature and philosophy",group=2)
-
-    class231 = Class(level=2,section="Management and economy",group=1)
-    class331 = Class(level=3,section="Management and economy",group=1)
-
-    class241 = Class(level=2,section="Foreign languages",group=1)
-    class341 = Class(level=3,section="Foreign languages",group=1)
-
-    class251 = Class(level=2,section="Mathematics",group=1)
-    class351 = Class(level=3,section="Mathematics",group=1)
-
-    class261 = Class(level=2,section="Science Technology",group=1)
-    class361 = Class(level=3,section="Science Technology",group=1)
-
-
-
-
-
-
-    db.session.add(class111)
-    db.session.add(class112)
-    db.session.add(class121)
-    db.session.add(class122)
-    db.session.add(class123)
-    db.session.add(class211)
-    db.session.add(class212)
-    db.session.add(class213)
-    db.session.add(class311)
-    db.session.add(class312)
-    db.session.add(class313)
-    db.session.add(class221)
-    db.session.add(class222)
-    db.session.add(class321)
-    db.session.add(class322)
-    db.session.add(class231)
-    db.session.add(class331)
-    db.session.add(class241)
-    db.session.add(class341)
-    db.session.add(class251)
-    db.session.add(class351)
-    db.session.add(class261)
-    db.session.add(class361)
-
-    
+    db.session.add_all(classes)
     db.session.commit()
