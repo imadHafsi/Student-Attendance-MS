@@ -7,6 +7,5 @@ document.addEventListener('DOMContentLoaded', function() {
     non_selected_header: "All Permissions",
     selected_header: "Supplementary Permissions for User"
     });
-    
  
 })

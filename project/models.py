@@ -94,6 +94,14 @@ class User(db.Model, UserMixin):
         if role.name.lower() == "student":
             new_student = Student(user=self)
             db.session.add(new_student)
+        
+        if role.name.lower() == "teacher":
+            new_teacher = Teacher(user=self)
+            db.session.add(new_teacher)
+
+        if role.name.lower() == "supervisor":
+            new_supervisor = Supervisor(user=self)
+            db.session.add(new_supervisor)
 
 
 
@@ -128,13 +136,14 @@ class Profile(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
 
-# Association Table for Many-to-Many Relationship
-teacher_class = db.Table(
-    'teacher_class',
-    db.Column('teacher_id', db.Integer, db.ForeignKey('teachers.id'), primary_key=True),
-    db.Column('class_id', db.Integer, db.ForeignKey('classes.id'), primary_key=True)
-)
+class TeacherClass(db.Model):
+    __tablename__ = 'teacher_classes'
+    id = db.Column(db.Integer, primary_key=True)
+    teacher_id = db.Column(db.Integer, db.ForeignKey('teachers.id'), nullable=False)
+    class_id = db.Column(db.Integer, db.ForeignKey('classes.id'), nullable=False)
 
+    # Ensures a teacher is not assigned to the same class multiple times
+    __table_args__ = (db.UniqueConstraint('teacher_id', 'class_id', name='unique_teacher_class'),)
 
 # Class table
 class Class(db.Model):
@@ -144,11 +153,13 @@ class Class(db.Model):
     section = db.Column(db.String(100), nullable=False)
     group = db.Column(db.Integer,nullable=False)
 
-    supervisor_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
-    supervisor = db.relationship('User', backref='classes')
+    supervisor_id = db.Column(db.Integer, db.ForeignKey('supervisors.id'))
 
-    teachers = db.relationship('Teacher', secondary=teacher_class, back_populates='classes')
+    # Many-to-many relationship with Teacher
+    teachers = db.relationship('Teacher', secondary='teacher_classes', back_populates='classes')
 
+    # Unique constraint to prevent duplicate level-section-group combinations
+    __table_args__ = (db.UniqueConstraint('level', 'section', 'group', name='unique_level_section_group'),)
     
 
 
@@ -161,12 +172,17 @@ class Subject(db.Model):
 class Teacher(db.Model):
     __tablename__ = 'teachers'
     id = db.Column(db.Integer , primary_key=True)
+    teacher_id = db.Column(db.String(20) , unique = True)
+
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), unique=True, nullable=False)
-    subject_id = db.Column(db.Integer, db.ForeignKey('subjects.id'), nullable=False)
     user = db.relationship('User', backref=db.backref('teacher', uselist=False))
+
+    subject_id = db.Column(db.Integer, db.ForeignKey('subjects.id'), nullable=True)
     subject = db.relationship('Subject', backref='teachers')
 
-    classes = db.relationship('Class', secondary=teacher_class, back_populates='teachers')
+    classes = db.relationship('Class', secondary='teacher_classes', back_populates='teachers')
+
+
 
 
 class Student(db.Model):
@@ -179,6 +195,17 @@ class Student(db.Model):
 
     class_id = db.Column(db.Integer, db.ForeignKey('classes.id'), nullable=True)
     class_ = db.relationship('Class', backref='students')
+
+class Supervisor(db.Model):
+    __tablename__ = 'supervisors'
+    id = db.Column(db.Integer , primary_key=True)
+    supervisor_id = db.Column(db.String(20) , unique = True)
+
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), unique=True, nullable=False)
+    user = db.relationship('User', backref=db.backref('supervisor', uselist=False))
+
+    classes = db.relationship('Class', backref='supervisor', lazy='dynamic')
+
 
 
 class Attendance(db.Model):

@@ -1,4 +1,4 @@
-from .models import Role,User,Class,Profile
+from .models import Role,User,Class,Profile,Subject
 from werkzeug.security import generate_password_hash
 
 def data(db):
@@ -43,6 +43,27 @@ def data(db):
     if Supervisor_user3 is None:
         Supervisor_user3 = User(username='supervisor3', email='supervisor3@example.com', password=generate_password_hash("supervisor3") , role=supervisor_role )
         db.session.add(Supervisor_user3)
+
+    teacher_user = User.query.filter_by(username='teacher1').first()
+    if teacher_user is None:
+        teacher_user = User(username='teacher1', email='teacher1@example.com', password=generate_password_hash("teacher1") , role=teacher_role )
+        teacher_user.profile.first_name = 'ahmed'
+        teacher_user.profile.last_name = 'nezar'
+        db.session.add(teacher_user)
+    
+    teacher_user2 = User.query.filter_by(username='teacher2').first()
+    if teacher_user2 is None:
+        teacher_user2 = User(username='teacher2', email='teacher2@example.com', password=generate_password_hash("teacher2") , role=teacher_role )
+        teacher_user2.profile.first_name = 'anis'
+        teacher_user2.profile.last_name = 'bouzid'
+        db.session.add(teacher_user2)
+
+    teacher_user3 = User.query.filter_by(username='teacher3').first()
+    if teacher_user3 is None:
+        teacher_user3 = User(username='teacher3', email='teacher3@example.com', password=generate_password_hash("teacher3") , role=teacher_role )
+        teacher_user3.profile.first_name = 'fatima'
+        teacher_user3.profile.last_name = 'saada'
+        db.session.add(teacher_user3)
 
     student1 = User.query.filter_by(username='student1').first()
     if student1 is None:
@@ -89,4 +110,18 @@ def data(db):
     ]
 
     db.session.add_all(classes)
+
+    subject_names = [
+        "Mathematics", "Physics", "Natural Sciences", "Arabic Language and Literature", 
+        "French Language", "English Language", "Philosophy", "Islamic Education", 
+        "History and Geography", "Technology (Electrical Engineering)", 
+        "Technology (Mechanical Engineering)", "Technology (Civil Engineering)", 
+        "Technology (Process Engineering)", "Amazigh Language", "Spanish Language", 
+        "German Language"
+    ]
+
+    subjects = [Subject(name=name) for name in subject_names]
+    db.session.add_all(subjects)
+
+
     db.session.commit()

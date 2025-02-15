@@ -1,6 +1,60 @@
 from .head import *
 
 
+@admin.route('/classes/get_classes_to_assign', methods=['POST'])
+def get_classes_to_assign():
+    data = request.get_json()
+    my_id = data.get('id')  
+    my_role = data.get('role')
+
+    if my_role=='teacher':
+        if not my_id:
+            return jsonify({'error': 'Teacher ID is required'}), 400
+
+        teacher = Teacher.query.filter_by(id=my_id).first()
+        if not teacher:
+            return jsonify({'error': 'Teacher not found'}), 404
+
+        all_classes = Class.query.all()  # Get all classes
+        assigned_class_ids = {cls.id for cls in teacher.classes}  # Set of assigned class IDs
+
+        teacher_classes = []
+        for classe in all_classes:
+            teacher_classes.append({
+                'id': classe.id,
+                'level': classe.level,
+                'section': classe.section,
+                'group': classe.group,
+                'selected': classe.id in assigned_class_ids  # Check if class is assigned
+            })
+
+        return jsonify({'classes': teacher_classes})
+
+    if my_role=='supervisor':
+        if not my_id:
+            return jsonify({'error': 'Supervisor ID is required'}), 400
+
+        supervisor = Supervisor.query.filter_by(id=my_id).first()
+        if not supervisor:
+            return jsonify({'error': 'Supervisor not found'}), 404
+
+        all_classes = Class.query.all()  # Get all classes
+        assigned_class_ids = {cls.id for cls in supervisor.classes}  # Set of assigned class IDs
+
+        supervisor_classes = []
+        for classe in all_classes:
+            supervisor_classes.append({
+                'id': classe.id,
+                'level': classe.level,
+                'section': classe.section,
+                'group': classe.group,
+                'selected': classe.id in assigned_class_ids  # Check if class is assigned
+            })
+
+        return jsonify({'classes': supervisor_classes})
+    
+    return jsonify({'classes': [] })
+
 @admin.route('/classes/get_sections', methods=['POST'])
 def get_sections():
     data = request.get_json()

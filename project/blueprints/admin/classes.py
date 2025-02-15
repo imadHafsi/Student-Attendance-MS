@@ -41,7 +41,6 @@ def add_update_class():
     supervisors = User.query.join(Role).filter(Role.name == "Supervisor").all()
     form.supervisors.choices = [(0, "Select a supervisor")]+[(s.id, s.username) for s in supervisors]
 
-    print(form.supervisors.data)
     if form.validate_on_submit():
         try:
             #print(form.id.data)

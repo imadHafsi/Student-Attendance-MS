@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, DateField, SubmitField,HiddenField,PasswordField,DateTimeField,TextAreaField,FileField
+from wtforms import StringField, SelectField, DateField, SubmitField,HiddenField,PasswordField,SelectMultipleField,DateField,FileField
 from wtforms.validators import DataRequired, Email,ValidationError,EqualTo,Optional
 import re
 
@@ -59,9 +59,37 @@ class StudentForm(FlaskForm):
     firstname = StringField('First Name')
     lastname = StringField('Last Name')
     sex = SelectField('Sex', choices=[('Male', 'Male'), ('Female', 'Female')])
-    dob = DateTimeField('Date of Birth', format='%d %b, %Y', validators=[Optional()])
+    dob = DateField('Date of Birth', format='%Y-%m-%d', validators=[Optional()])
     submit = SubmitField('Submit')
 
+class TeacherForm(FlaskForm):
+    id = HiddenField('id')
+    teacher_id = StringField('teacher id')
+    firstname = StringField('First Name')
+    lastname = StringField('Last Name')
+    sex = SelectField('Sex', choices=[('Male', 'Male'), ('Female', 'Female')])
+    dob = DateField('Date of Birth', format='%Y-%m-%d', validators=[Optional()])
+    subjects = SelectField("Subjects", coerce=int, validators=[Optional()])
+    submit = SubmitField('Submit')
+
+class AssignClassForm(FlaskForm):
+    tid = HiddenField('tid')
+    classes = SelectMultipleField(
+        "Assign Classes", 
+        coerce=int, 
+        validators=[Optional()]
+    )  # Multi-select field for classes
+
+    submit = SubmitField("Assign Classes")
+
+class SupervisorForm(FlaskForm):
+    id = HiddenField('id')
+    supervisor_id = StringField('supervisor id')
+    firstname = StringField('First Name')
+    lastname = StringField('Last Name')
+    sex = SelectField('Sex', choices=[('Male', 'Male'), ('Female', 'Female')])
+    dob = DateField('Date of Birth', format='%Y-%m-%d', validators=[Optional()])
+    submit = SubmitField('Submit')
 
 
 class ClassroomForm(FlaskForm):

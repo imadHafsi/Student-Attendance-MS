@@ -24,8 +24,24 @@ document.querySelectorAll('.edit-item-btn').forEach(function(button) {
         document.getElementById('student_id-field').value = student_id;
         document.getElementById('firstname-field').value = firstname;
         document.getElementById('lastname-field').value = lastname;
-        document.getElementById('dob-field').value = dob;
         document.getElementById('sex-field').value = sex;
+
+        let dobField = document.getElementById('dob-field');
+        let flatpickrInstance = flatpickr(dobField, {
+            dateFormat: "Y-m-d",  // Ensure format matches Flask-WTF's expected format
+            altInput: true,
+            altFormat: "d M, Y",  // Human-readable format
+            allowInput: true
+        });
+
+        // Convert the date format before populating the modal
+          // Set Flatpickr date if DOB exists
+        if (dob) {
+            let parsedDate = new Date(dob);
+            flatpickrInstance.setDate(parsedDate, true); // Update Flatpickr with the correct date
+        } else {
+            flatpickrInstance.clear(); // Clear the field if no date is available
+        }
     });
 });
 
@@ -34,9 +50,18 @@ document.getElementById("showModal").addEventListener("hidden.bs.modal", functio
     document.getElementById('student_id-field').value = "";
     document.getElementById('firstname-field').value = "";
     document.getElementById('lastname-field').value = "";
-    document.getElementById('dob-field').value = "";
     document.getElementById('dob-field').setAttribute('placeholder', 'Select date');
     document.getElementById('sex-field').value = "";
+
+    let dobField = document.getElementById('dob-field');
+        let flatpickrInstance = flatpickr(dobField, {
+            dateFormat: "Y-m-d",  // Ensure format matches Flask-WTF's expected format
+            altInput: true,
+            altFormat: "d M, Y",  // Human-readable format
+            allowInput: true
+        });
+
+        flatpickrInstance.clear();
 });
 
 document.getElementById("showModal").addEventListener("show.bs.modal", function(e) {
